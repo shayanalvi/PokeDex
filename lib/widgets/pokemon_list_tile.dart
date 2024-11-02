@@ -1,22 +1,71 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pokedex_riverpod/models/pokemon.dart';
+import 'package:pokedex_riverpod/providers/pokemon_data_providers.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
-class PokemonListTile extends StatelessWidget {
+class PokemonListTile extends ConsumerWidget {
   final String pokemonURL;
 
   PokemonListTile({
     required this.pokemonURL,
   });
   @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return _tile(
-      context,
+  Widget build(
+    BuildContext context,
+    WidgetRef ref,
+  ) {
+    final pokemon = ref.watch(
+      pokemonDataProvider(
+        pokemonURL,
+      ),
     );
+
+    return pokemon.when(data: (data) {
+      return _tile(
+        context,
+        false,
+        data,
+      );
+    }, error: (error, StackTrace) {
+      return Text("Error: $error");
+    }, loading: () {
+      return _tile(
+        context,
+        true,
+        null,
+      );
+    });
   }
 
-  Widget _tile(BuildContext context) {
-    return ListTile(
-      title: Text(pokemonURL),
+  Widget _tile(
+    BuildContext context,
+    bool isLoading,
+    Pokemon? pokemon,
+  ) {
+    return Skeletonizer(
+      enabled: isLoading,
+      child: ListTile(
+        leading: pokemon != null
+            ? CircleAvatar(
+                backgroundImage: NetworkImage(
+                  pokemon.sprites!.frontDefault!,
+                ),
+              )
+            : CircleAvatar(),
+        title: Text(
+          pokemon != null
+              ? pokemon.name!.toUpperCase()
+              : "Currenty loading name for pokemon",
+        ),
+        subtitle: Text("Has ${pokemon?.moves?.length.toString() ?? 0}moves"),
+        trailing: IconButton(
+          onPressed: () {},
+          icon: Icon(
+            Icons.favorite_border,
+          ),
+        ),
+      ),
     );
   }
 }

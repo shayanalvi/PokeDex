@@ -21,6 +21,7 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
+  final ScrollController _allPokemonsListScrollController = ScrollController();
   late HomePageController _homePageController;
   late HomePageData _homePageData;
 
@@ -77,6 +78,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           SizedBox(
             height: MediaQuery.sizeOf(context).height * 0.60,
             child: ListView.builder(
+                controller: _allPokemonsListScrollController,
                 itemCount: _homePageData.data?.results?.length ?? 0,
                 itemBuilder: (context, index) {
                   PokemonListResult pokemon =
