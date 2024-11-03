@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokedex_riverpod/models/pokemon.dart';
 import 'package:pokedex_riverpod/providers/pokemon_data_providers.dart';
+import 'package:pokedex_riverpod/widgets/pokemon_stats_card.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class PokemonListTile extends ConsumerWidget {
@@ -54,37 +55,48 @@ class PokemonListTile extends ConsumerWidget {
   ) {
     return Skeletonizer(
       enabled: isLoading,
-      child: ListTile(
-        leading: pokemon != null
-            ? CircleAvatar(
-                backgroundImage: NetworkImage(
-                  pokemon.sprites!.frontDefault!,
-                ),
-              )
-            : CircleAvatar(),
-        title: Text(
-          pokemon != null
-              ? pokemon.name!.toUpperCase()
-              : "Currenty loading name for pokemon",
-        ),
-        subtitle: Text("Has ${pokemon?.moves?.length.toString() ?? 0}moves"),
-        trailing: IconButton(
-          onPressed: () {
-            if (_favoritePokemons.contains(pokemonURL)) {
-              _favoritePokemonsProvider.removeFavoritePokemon(
-                pokemonURL,
-              );
-            } else {
-              _favoritePokemonsProvider.addFavoritePokemon(
-                pokemonURL,
-              );
-            }
-          },
-          icon: Icon(
-            _favoritePokemons.contains(pokemonURL)
-                ? Icons.favorite
-                : Icons.favorite_border,
-            color: Colors.red,
+      child: GestureDetector(
+        onTap: () {
+          if (!isLoading) {
+            showDialog(
+                context: context,
+                builder: (_) {
+                  return PokemonStatsCard(pokemonURL: pokemonURL);
+                });
+          }
+        },
+        child: ListTile(
+          leading: pokemon != null
+              ? CircleAvatar(
+                  backgroundImage: NetworkImage(
+                    pokemon.sprites!.frontDefault!,
+                  ),
+                )
+              : CircleAvatar(),
+          title: Text(
+            pokemon != null
+                ? pokemon.name!.toUpperCase()
+                : "Currenty loading name for pokemon",
+          ),
+          subtitle: Text("Has ${pokemon?.moves?.length.toString() ?? 0}moves"),
+          trailing: IconButton(
+            onPressed: () {
+              if (_favoritePokemons.contains(pokemonURL)) {
+                _favoritePokemonsProvider.removeFavoritePokemon(
+                  pokemonURL,
+                );
+              } else {
+                _favoritePokemonsProvider.addFavoritePokemon(
+                  pokemonURL,
+                );
+              }
+            },
+            icon: Icon(
+              _favoritePokemons.contains(pokemonURL)
+                  ? Icons.favorite
+                  : Icons.favorite_border,
+              color: Colors.red,
+            ),
           ),
         ),
       ),
