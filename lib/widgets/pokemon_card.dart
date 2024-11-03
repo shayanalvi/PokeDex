@@ -8,10 +8,15 @@ import 'package:skeletonizer/skeletonizer.dart';
 class PokemonCard extends ConsumerWidget {
   final String pokemonURL;
 
-  const PokemonCard({super.key, required this.pokemonURL});
+  late FavoritePokemonsProvider _favoritePokemonsProvider;
+
+  PokemonCard({super.key, required this.pokemonURL});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    _favoritePokemonsProvider = ref.watch(
+      favoritePokemonsProvider.notifier,
+    );
     final pokemon = ref.watch(pokemonDataProvider(
       pokemonURL,
     ));
@@ -78,12 +83,25 @@ class PokemonCard extends ConsumerWidget {
               ],
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
                   "${pokemon?.moves?.length} Movies",
                   style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    _favoritePokemonsProvider.removeFavoritePokemon(
+                      pokemonURL,
+                    );
+                  },
+                  child: Icon(
+                    Icons.favorite,
+                    color: Colors.red,
                   ),
                 ),
               ],
