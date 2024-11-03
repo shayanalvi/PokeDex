@@ -4,6 +4,7 @@ import 'package:pokedex_riverpod/controllers/home_page_controller.dart';
 import 'package:pokedex_riverpod/models/page_data.dart';
 import 'package:pokedex_riverpod/models/pokemon.dart';
 import 'package:pokedex_riverpod/providers/pokemon_data_providers.dart';
+import 'package:pokedex_riverpod/widgets/pokemon_card.dart';
 import 'package:pokedex_riverpod/widgets/pokemon_list_tile.dart';
 import 'package:riverpod/riverpod.dart';
 
@@ -108,6 +109,21 @@ class _HomePageState extends ConsumerState<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                if (_favoritePokemons.isNotEmpty)
+                  SizedBox(
+                    height: MediaQuery.sizeOf(context).height * 0.48,
+                    child: GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2),
+                        itemCount: _favoritePokemons.length,
+                        itemBuilder: (context, index) {
+                          String pokemonURL = _favoritePokemons[index];
+                          return PokemonCard(
+                            pokemonURL: pokemonURL,
+                          );
+                        }),
+                  ),
                 if (_favoritePokemons.isEmpty)
                   const Text("No fave Pokemons yet! :("),
               ],
